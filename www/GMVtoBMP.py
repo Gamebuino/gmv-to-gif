@@ -67,8 +67,28 @@ with open(ROOT+'/in.gmv', 'rb') as f:
 	x_cursor = 0
 	y_cursor = 0
 	if img_index:
-		print('index not yet implemented')
-		sys.exit(-2)
+		while True:
+			s = f.read(1)
+			if not s:
+				break
+			count = struct.unpack('B', s)[0]
+			s = f.read(1)
+			byte = struct.unpack('B', s)[0]
+			c1 = byte >> 4
+			c2 = byte & 0x0F
+			i = 0
+			while i < count:
+				i += 1
+				pixels[x_cursor, y_cursor] = color_index[c1]
+				x_cursor += 1
+				if x_cursor >= width:
+					x_cursor = 0
+					y_cursor += 1
+				pixels[x_cursor, y_cursor] = color_index[c2]
+				x_cursor += 1
+				if x_cursor >= width:
+					x_cursor = 0
+					y_cursor += 1
 	else:
 		while True:
 			s = f.read(1)
