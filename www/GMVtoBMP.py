@@ -1,4 +1,4 @@
-import sys, struct
+import sys, struct, json
 from PIL import Image
 
 color_index = [
@@ -52,6 +52,12 @@ with open(ROOT+'/in.gmv', 'rb') as f:
 	print('Height:', height)
 	print('Frames:', frames)
 	print('Image mode:', 'Index' if img_index else 'RGB565')
+	with open(ROOT+'/metadata.json', 'w+') as md:
+		md.write(json.dumps({
+			'width': width,
+			'height': height,
+			'frames': frames,
+		}))
 	
 	if img_index:
 		transparent_color = struct.unpack('B', f.read(1))[0]

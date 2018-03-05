@@ -1,20 +1,31 @@
-import math, subprocess, os, sys
+import math, subprocess, os, sys, json
 from PIL import Image
 
 ROOT = sys.argv[1]
 
 fps = 25
 
-width = 80.0
-height = 64.0
+img_in = Image.open(ROOT+'/in.bmp').convert('RGB')
 
-scale = math.ceil(1080.0 / height)
+md = False
+
+if os.path.isfile(ROOT+'/metadata.json'):
+	with open(ROOT+'/metadata.json') as f:
+		md = json.load(f)
+		width = float(md['width'])
+		height = float(md['height'])
+else:
+	width = float(img_in.size[0])
+	height = width * 64.0 / 80.0
+
 scale = 3
 output_width = width*scale
 output_height = height*scale
 
-img_in = Image.open(ROOT+'/in.bmp').convert('RGB')
 frames = img_in.size[1] / height
+if md and frames != md['frames']:
+	print('Error: number of frames doesn\'t match')
+	sys.exit(-1)
 print('Frames: ', frames)
 
 data = list(img_in.getdata())
